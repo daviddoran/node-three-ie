@@ -1,0 +1,31 @@
+{
+  "name": "three-ie",
+  "version": "0.0.1",
+  "description": "Download the allowance and current usage for a Three Ireland billpay account.",
+  "main": "main.js",
+  "dependencies": {
+    "cheerio": "~0.12.2",
+    "request": "~2.27.0",
+    "async": "~0.2.9"
+  },
+  "devDependencies": {
+    "mocha": "~1.14.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:daviddoran/node-three-ie.git"
+  },
+  "keywords": [
+    "three",
+    "billpay",
+    "ireland"
+  ],
+  "author": "David Doran",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/daviddoran/node-three-ie/issues"
+  }
+}
