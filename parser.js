@@ -52,11 +52,14 @@ function Parser() {}
  * Parse the usage/allowance HTML document
  *
  * @param $document
- * @returns {ParseResult}
+ * @return {ParseResult}
  */
 Parser.prototype.parse = function ($document) {
     var result = new ParseResult({date: new Date});
     var $table = $document('#allowanceRemBody');
+    if ($table.length !== 1) {
+        throw new Error('Allowance remaining table (#allowanceRemBody) not found.');
+    }
     this.parse_remaining_allowance_table($table, result);
     this.parse_current_spend($document.html(), result);
     this.parse_price_plan($document.html(), result);
@@ -70,7 +73,7 @@ Parser.prototype.parse = function ($document) {
  *
  * @param $table
  * @param {ParseResult} result
- * @returns {Array}
+ * @return {Array}
  */
 Parser.prototype.parse_remaining_allowance_table = function ($table, result) {
     var $trs = $table.find('tr');
@@ -103,7 +106,9 @@ Parser.prototype.parse_current_spend = function (html, result) {
     while (match = regexp.exec(html)) {
         spends.push(parsef(match[1]));
     }
-    result.current_spend = Math.max.apply(null, spends);
+    if (spends.length > 0) {
+        result.current_spend = Math.max.apply(null, spends);
+    }
 };
 
 /**
@@ -125,7 +130,7 @@ Parser.prototype.parse_price_plan = function (html, result) {
  * Normalize the price plan name so we can look it up
  *
  * @param {string} plan_name
- * @returns {string}
+ * @return {string}
  */
 Parser.prototype.normalize_price_plan = function (plan_name) {
     if (typeof plan_name !== 'string') {

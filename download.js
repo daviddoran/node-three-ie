@@ -23,25 +23,39 @@ var URIs = {
  * to get around the 4 or 5 HTTP requests required to fake the login,
  * exchange the SSO (Single Sign-On) token on the main site, etc.
  *
+ * The options param may contain the following properties:
+ *
+ * {
+ *   //Enable or disable debugging
+ *   debug: false,
+ *
+ *   //Use a HTTP(S) proxy
+ *   proxy: 'http://127.0.0.1:8080',
+ *
+ *   //The timeout in ms for each HTTP(S) request
+ *   timeout: 30 * 1000
+ * }
+ *
  * @param {Account} account
  * @constructor
  */
 
-function Download(account) {
-    this.debugging = false;
+function Download(account, options) {
+    options = options || {};
+    this.debug = options.debug || false;
     this.account = account;
     var jar = request.jar();
-    var options = {
+    var request_options = {
         followRedirect: false,
         followAllRedirects: true,
         jar: jar,
-        timeout: 30 * 1000
+        timeout: options.timeout || (30 * 1000)
     };
-    if (this.debugging) {
-        options.strictSSL = false;
-        options.proxy = 'http://127.0.0.1:8080';
+    if (options.proxy) {
+        request_options.strictSSL = false;
+        request_options.proxy = options.proxy;
     }
-    this.request = request.defaults(options);
+    this.request = request.defaults(request_options);
     this.$get = $get.bind(this);
 }
 
@@ -110,7 +124,12 @@ function getUsageDocument(url_with_ticket, next) {
 
 function parseUsage($document, next) {
     var parser = new Parser;
-    return next(null, parser.parse($document));
+    try {
+        var parse_result = parser.parse($document);
+        next(null, parse_result);
+    } catch (e) {
+        next(e);
+    }
 }
 
 module.exports = Download;
